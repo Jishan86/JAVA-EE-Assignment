@@ -1,0 +1,113 @@
+package mypack;
+
+
+
+public interface Weapon {
+
+
+	void attack();
+}
+
+
+//_______________
+
+
+package mypack;
+
+
+public class Gun implements Weapon
+{
+	public void attack()
+	{
+		System.out.println("Gun attack");
+	}
+
+}
+
+
+//______________
+
+package mypack;
+
+
+public class Missile implements Weapon 
+{
+	public void attack()
+	{
+		System.out.println("Missiles attack");
+	}
+}
+
+
+//___________________
+
+
+package mypack;
+
+
+public class Sword implements Weapon
+{
+	public void attack()
+	{
+		System.out.println("Sword attack");
+	}
+
+}
+
+
+//__________________
+
+
+package mypack;
+
+	public class Soldier 
+	{
+		
+		private Weapon weapon;
+		
+		public Soldier()
+		{
+			
+		}
+		
+		
+		public Weapon getWeapon() {
+			return weapon;
+		}
+
+		public void setWeapon(Weapon weapon) {
+			this.weapon = weapon;
+		}
+
+
+		public  void perform()
+		{
+			weapon.attack();
+		}
+	}
+
+
+//___________________________________
+
+
+
+package mypack;
+
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class MyApp {
+
+	public static void main(String[] args) {
+		
+		ClassPathXmlApplicationContext appContext=new ClassPathXmlApplicationContext("account.xml");
+        System.out.println("Classpath loaded");
+        Soldier ab=(Soldier)appContext.getBean("s");
+        ab.perform();
+	
+	}
+
+}
+
+
+
+//______________________________
