@@ -1,0 +1,273 @@
+//ProjectName.java
+
+
+package com.example.demo;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class AssignDay131Application {
+
+	public static void main(String[] args) {
+		SpringApplication.run(AssignDay131Application.class, args);
+	}
+
+}
+
+//__________________________________________________________
+
+
+//@Entity class Tour.java
+
+package com.example.demo;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name="Tour1")
+
+public class Tour 
+{
+	private int id,no_of_days;
+	private String type,location;
+	private double cost;
+	
+	
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	public int getId() {
+		return id;
+	}
+	
+	public void setId(int id) {
+		this.id = id;
+	}
+	public int getNo_of_days() {
+		return no_of_days;
+	}
+	public void setNo_of_days(int no_of_days) {
+		this.no_of_days = no_of_days;
+	}
+	public String getType() {
+		return type;
+	}
+	public void setType(String type) {
+		this.type = type;
+	}
+	public String getLocation() {
+		return location;
+	}
+	public void setLocation(String location) {
+		this.location = location;
+	}
+	public double getCost() {
+		return cost;
+	}
+	public void setCost(double cost) {
+		this.cost = cost;
+	}
+	@Override
+	public String toString() {
+		return "Tour [id=" + id + ", no_of_days=" + no_of_days + ", type=" + type + ", location=" + location + ", cost="
+				+ cost + "]";
+	}
+
+	public Tour(int id, int no_of_days, String type, String location, double cost) {
+		super();
+		this.id = id;
+		this.no_of_days = no_of_days;
+		this.type = type;
+		this.location = location;
+		this.cost = cost;
+	}
+
+	public Tour() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+	
+	
+
+}
+
+//___________________________________________________________________
+
+//@RestController layer TourController.java
+
+package com.example.demo;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@CrossOrigin("http://127.0.0.1:5500")
+public class TourController 
+{
+	@Autowired
+	TourManager manager;
+	
+	
+	@PostMapping(value="api/tours")
+	public void addTour1(@RequestBody Tour t)
+	{
+		System.out.println("inside contr add method");
+		manager.addTour(t);
+	}
+	
+	
+	@GetMapping(value="api/tours")
+	public List<Tour> viewAll1()
+	{
+		return manager.viewAll();
+	}
+	
+	@GetMapping(value="api/tours1/{id}")
+	public Optional<Tour> getTour1(@PathVariable int id)
+	{
+		return manager.getTour(id);
+	}
+	
+	@GetMapping(value="api/tours/{type}")
+	public List<Tour> getSelected1(@PathVariable String type)
+	{
+		return manager.getSelected(type);
+	}
+	
+	@PutMapping(value="api/tours/{id}")
+	public void update1(@RequestBody Tour t,@PathVariable int id)
+	{
+		manager.updateTour(t, id);
+	}
+	
+	@DeleteMapping(value="api/tours_delete/{id}")
+	public void delete1(@PathVariable int id)
+	{
+		manager.delete(id);
+	}
+}
+
+//___________________________________________________________________
+
+
+//Service Layer  interface TourManager
+
+package com.example.demo;
+
+import java.util.List;
+import java.util.Optional;
+
+public interface TourManager 
+{
+	void addTour(Tour t);
+	
+	List<Tour> viewAll();
+	
+	Optional<Tour> getTour(int id);
+	
+	List<Tour> getSelected(String type);
+	
+	void delete(int id);
+	
+	void updateTour(Tour t,int id);
+}
+
+//____________________________________________________________________
+
+
+//Service Layer TourManagerImpl.java @Service class
+
+package com.example.demo;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+@Service
+public class TourManagerImpl implements TourManager
+{
+	@Autowired
+	TourRepository repository;
+	
+	
+	@Override
+	public void addTour(Tour t) {
+		repository.save(t);
+		
+	}
+
+	@Override
+	public List<Tour> viewAll() {
+		return repository.findAll();
+	}
+
+	@Override
+	public Optional<Tour> getTour(int id) {
+		return repository.findById(id);
+	}
+
+	@Override
+	public List<Tour> getSelected(String type) {
+		return repository.listCat(type);
+	}
+
+	@Override
+	public void delete(int id) {
+		repository.deleteById(id);
+		
+	}
+
+	@Override
+	public void updateTour(Tour t, int id) {
+		repository.update(t.getType(),t.getLocation(),t.getCost(),t.getNo_of_days(),id);
+	}
+}
+
+
+//_____________________________________________________________________
+
+
+//TourRepository.java
+
+
+package com.example.demo;
+
+import java.util.List;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
+
+public interface TourRepository extends JpaRepository<Tour,Integer>
+{
+	@Modifying
+	@Transactional
+	@Query("update Tour t set t.type=:type,t.location=:location,t.cost=:cost,t.no_of_days=:no_of_days where t.id=:id")
+	
+	void update(@Param("type")String type,@Param("location")String location,@Param("cost")double cost,@Param("no_of_days") int no_of_days,@Param("id")int id);
+	
+
+	@Query("from Tour t where t.type=:type")
+	List<Tour> listCat(@Param("type") String name);
+}
+
+
+//____________________________________________________________________
