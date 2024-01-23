@@ -1,0 +1,108 @@
+package mypack;
+
+import org.springframework.stereotype.Component;
+
+
+public interface Weapon {
+
+
+	void attack();
+}
+
+//_________________________________
+
+package mypack;
+
+import org.springframework.stereotype.Component;
+
+@Component(value="g")
+public class Gun implements Weapon
+{
+	public void attack()
+	{
+		System.out.println("Gun attack");
+	}
+
+}
+
+//_______________________________________
+
+package mypack;
+
+import org.springframework.stereotype.Component;
+
+@Component(value="m")
+public class Missile implements Weapon 
+{
+	public void attack()
+	{
+		System.out.println("Missiles attack");
+	}
+}
+
+
+//________________________________________
+
+
+package mypack;
+
+import org.springframework.stereotype.Component;
+
+@Component(value="sw")
+public class Sword implements Weapon
+{
+	public void attack()
+	{
+		System.out.println("Sword attack");
+	}
+
+}
+
+
+//_________________________________________
+
+
+package mypack;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
+
+@Component(value="s")
+public class Soldier 
+{
+	
+	@Autowired
+	@Qualifier("sw")
+private Weapon weapon;
+	
+	public  void perform()
+	{
+		weapon.attack();
+	}
+}
+
+
+//________________________________________
+
+
+package mypack;
+
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class MyApp {
+
+	public static void main(String[] args) {
+		
+		ClassPathXmlApplicationContext appContext=new ClassPathXmlApplicationContext("account.xml");
+        System.out.println("Classpath loaded");
+        Soldier ab=(Soldier)appContext.getBean("s");
+        ab.perform();
+	
+	}
+
+}
+
+
+_____________________________________________
+
